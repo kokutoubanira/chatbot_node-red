@@ -1,0 +1,1 @@
+[{"id":"30b1a9ad.1134d6","type":"http in","z":"f6f2187d.f17ca8","name":"","url":"/test","method":"get","upload":false,"swaggerDoc":"","x":120,"y":220,"wires":[["aa6a7d98.bc6fc"]]}]
