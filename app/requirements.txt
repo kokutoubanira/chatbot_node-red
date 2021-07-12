@@ -1,0 +1,5 @@
+Flask==2.0.1
+gensim==4.0.1
+sklearn
+mecab-python3
+python-Levenshtein

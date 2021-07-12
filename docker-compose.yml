@@ -7,3 +7,19 @@ services:
             dockerfile: Dockerfile
         ports:
             - "1880:1880"
+        networks: 
+            - node-net
+        links:
+            - web:web
+    web:
+        build: 
+            context: ./app/
+            dockerfile: Dockerfile
+        ports:
+            - "5000:5000"
+        volumes: 
+            - ./app:/app
+        networks: 
+            - node-net
+networks:
+  node-net:
