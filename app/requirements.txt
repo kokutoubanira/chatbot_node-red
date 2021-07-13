@@ -3,3 +3,6 @@ gensim==4.0.1
 sklearn
 mecab-python3
 python-Levenshtein
+scipy
+numpy
+python-crfsuite
