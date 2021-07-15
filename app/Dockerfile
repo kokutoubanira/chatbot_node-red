@@ -47,16 +47,26 @@ RUN cp mecabrc /usr/local/etc/mecabrc
 RUN pip install --upgrade pip
 RUN pip install mecab-python3
 
-# python libs (spaCy & GiNZA)
-RUN pip install spacy ginza
-RUN python -m spacy download ja_core_news_sm
-RUN python -m spacy download ja_core_news_md
-RUN python -m spacy download ja_core_news_lg
+# # python libs (spaCy & GiNZA)
+# RUN pip install spacy ginza
+# RUN python -m spacy download ja_core_news_sm
+# RUN python -m spacy download ja_core_news_md
+# RUN python -m spacy download ja_core_news_lg
+
 
 WORKDIR /app
 
 COPY ./ /app
 
-RUN pip install -r requirements.txt
+# # ユーザーを作成
+# ARG UID=1000
+# RUN useradd -m -u ${UID} docker
+
+# # 作成したユーザーに切り替える
+# USER ${UID}
+
+RUN pip install --user -r requirements.txt
+RUN pip install --user "https://github.com/megagonlabs/ginza/releases/download/v1.0.2/ja_ginza_nopn-1.0.2.tgz"
+
 
 CMD ["python", "flask_app.py"]

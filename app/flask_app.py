@@ -9,7 +9,25 @@ from datetime import datetime, timedelta, time
 import sqlite3
 import sqlite3
 
+
+from spacy.pipeline import EntityRuler 
+import spacy
+nlp = spacy.load("ja_ginza_nopn")
+patterns = [{"label": "INFO", "pattern": "天気"},
+           {"label": "INFO", "pattern": "気温"}]
+
+ruler = EntityRuler(nlp)
+ruler.add_patterns(patterns)
+nlp.add_pipe(ruler) 
+
+doc = nlp("大阪府と東京の明日の天気と気温")
+
+for ent in doc.ents:
+    print(ent.text, ent.label_)
+
+
 app = Flask(__name__)
+app.config["JSON_AS_ASCII"] = False
 
 prefs = ["北海道","青森","岩手","宮城","秋田","山形",
 "福島","茨城","栃木","群馬","埼玉","千葉","東京","神奈川","新潟",
@@ -38,6 +56,32 @@ latlondic = {'北海道': (43.06, 141.35), '青森': (40.82, 140.74), '岩手': 
 current_weather_url = 'http://api.openweathermap.org/data/2.5/weather'
 forecast_url = 'http://api.openweathermap.org/data/2.5/forecast'
 appid = 'c92cd5cc8e296e57239e20d8e3148479' # 自身のAPPIDを入れてください  
+
+
+
+@app.route('/weather_frame', methods=["GET", 'POST'])
+def weather_frame():
+    place = request.args.get('place', '')
+    date = request.args.get('date', '')
+    info = request.args.get('info', '')
+    value = request.args.get('text', '')
+    app.logger.debug(info)
+    doc = nlp(value)
+    for ent in doc.ents:
+        print(ent.text, ent.label_)
+        if ent.label_ == "LOC":
+            if ent.text in prefs:
+                place = ent.text
+        if ent.label_ == "DATE":
+            if ent.text in ["今日", "明日"]:
+                date = ent.text
+        if ent.label_ == "INFO":
+            info = ent.text
+    return json.dumps({"place": place, "date": date, "info": info}),200,{'content-type':'application/json'}
+
+
+
+
 
 def get_current_weather(lat,lon):
 # 天気情報を取得    
